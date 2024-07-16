@@ -4,11 +4,7 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 
@@ -19,17 +15,38 @@ public class MessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
 
+
         Bundle bundle = getIntent().getExtras();
-        Message message = (Message) bundle.getSerializable("message");
+        if (bundle != null) {
+
+            Message message = (Message) bundle.getSerializable("message");
+
+            // Ensure the message object is not null
+            if (message != null) {
+
+                TextView Name = findViewById(R.id.name);
+                TextView Text = findViewById(R.id.text);
+                ImageView Avatar = findViewById(R.id.avatar);
+
+                // Setting the image using Glide with a check for null
+                if (message.Avatar != null) {
+                    Glide.with(this).load(message.Avatar).into(Avatar);
+                } else {
+                    // Optionally set a default image if Avatar URL is null
+                    Glide.with(this).load(R.drawable.default_avatar).into(Avatar);
+                }
 
 
-        TextView Name = findViewById(R.id.name);
-        TextView Text = findViewById(R.id.text);
-        ImageView Avatar = findViewById(R.id.avatar);
+                Name.setText(message.Name != null ? message.Name : "Unknown Name");
+                Text.setText(message.Text != null ? message.Text : "No message text available.");
+            } else {
 
-        //Avatar.setImageURI(Uri.parse(message.Avatar));
-        Glide.with(this).load(message.Avatar).into(Avatar);
-        Name.setText(message.Name);
-        Text.setText(message.Text);
+
+                finish();
+            }
+        } else {
+
+            finish();
+        }
     }
 }
